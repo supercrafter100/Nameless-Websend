@@ -10,64 +10,55 @@
  */
 
 // Can the user view the panel?
-if($user->isLoggedIn()){
-	if(!$user->canViewACP()){
-		// No
-		Redirect::to(URL::build('/'));
-		die();
-	}
-	if(!$user->isAdmLoggedIn()){
-		// Needs to authenticate
-		Redirect::to(URL::build('/panel/auth'));
-		die();
-	} else {
-		if(!$user->hasPermission('admincp.websend')){
-			require_once(ROOT_PATH . '/404.php');
-			die();
-		}
-	}
-} else {
-	// Not logged in
-	Redirect::to(URL::build('/login'));
-	die();
+if(!$user->handlePanelPageLoad('admincp.websend.console')) {
+    require_once(ROOT_PATH . '/403.php');
+    die();
 }
 
-define('PAGE', 'panel');
-define('PARENT_PAGE', 'websend');
-define('PANEL_PAGE', 'websend');
+const PAGE = 'panel';
+const PARENT_PAGE = 'websend';
+const PANEL_PAGE = 'websend';
 $page_title = $websend_language->get('language', 'websend');
 require_once(ROOT_PATH . '/core/templates/backend_init.php');
 
 // Load modules + template
-Module::loadPage($user, $pages, $cache, $smarty, array($navigation, $cc_nav, $mod_nav), $widgets);
+Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp_nav], $widgets, $template);
 
-if(isset($_GET['hook'])){
-	$hook = HookHandler::getHook($_GET['hook']);
+if(isset($_GET['hook'])) {
 
-	if(!$hook){
+    // Check if the hook actually exists
+	$hook = EventHandler::getEvent($_GET['hook']);
+
+	if(!$hook) {
 		Redirect::to(URL::build('/panel/websend'));
 		die();
 	}
 
+    // Get the available commands that the current hook has
 	$db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])));
 	if(count($db_hook))
 		$db_hook = $db_hook[0];
 	else
 		$db_hook = null;
 
-	if(Input::exists()){
-		if(Token::check(Input::get('token'))){
+    // If data was submitted & token is valid
+	if(Input::exists()) {
+		if(Token::check(Input::get('token'))) {
+
+            // Check if the hook is attempted to be enabled or disabled
 			if(isset($_POST['enable_hook']) && $_POST['enable_hook'] == 'on')
 				$enabled = 1;
 			else
 				$enabled = 0;
 
+            // Check the submitted commands
 			if(isset($_POST['commands']))
 				$commands = $_POST['commands'];
 			else
 				$commands = '';
 
-			if(is_null($db_hook)){
+            // Set the commands in the database
+			if(is_null($db_hook)) {
 				$queries->create('websend_commands', array(
 					'hook' => $_GET['hook'],
 					'commands' => $commands,
@@ -76,12 +67,16 @@ if(isset($_GET['hook'])){
 			} else {
 				$queries->update('websend_commands', $db_hook->id, array(
 					'commands' => $commands,
-					'enabled' => $enabled
+					'enabled' => $enabled ?? 0
 				));
 			}
 
-			$db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])));
-			$db_hook = $db_hook[0];
+            // Set the commands we have to execute for the event
+            WSHook::setEvent($_GET['hook'], $commands);
+
+            // Save data
+            $db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])));
+            $db_hook = $db_hook[0];
 
 		} else
 			$errors = array($language->get('general', 'invalid_token'));
@@ -104,16 +99,18 @@ if(isset($_GET['hook'])){
 		'COMMANDS_VALUE' => (!is_null($db_hook)) ? Output::getClean($db_hook->commands) : '',
 		'INFO' => $language->get('general', 'info'),
 		'BACK' => $language->get('general', 'back'),
-		'BACK_LINK' => URL::build('/panel/websend')
+		'BACK_LINK' => URL::build('/panel/websend'),
 	));
 
 	$template->addCSSFiles(array(
 		(defined('CONFIG_PATH') ? CONFIG_PATH : '') . '/core/assets/plugins/switchery/switchery.min.css' => array()
 	));
 
-	$template->addJSFiles(array(
-		(defined('CONFIG_PATH') ? CONFIG_PATH : '') . '/core/assets/plugins/switchery/switchery.min.js' => array()
-	));
+    $template->addJSFiles([
+        (defined('CONFIG_PATH') ? CONFIG_PATH : '') . '/core/assets/plugins/ckeditor/ckeditor.js' => [],
+        (defined('CONFIG_PATH') ? CONFIG_PATH : '') . '/core/assets/plugins/toastr/toastr.min.js' => [],
+        (defined('CONFIG_PATH') ? CONFIG_PATH : '') . '/core/assets/plugins/switchery/switchery.min.js' => []
+    ]);
 
 	$template->addJSScript('
 		var elems = Array.prototype.slice.call(document.querySelectorAll(\'.js-switch\'));
@@ -123,34 +120,19 @@ if(isset($_GET['hook'])){
 		});
 	');
 
-	$template_file = 'websend/websend_hook.tpl';
+	$template_file = 'websend/websend_hooks_edit_old.tpl';
 
 } else {
-	if(Input::exists()){
-		if(Token::check(Input::get('token'))){
-			$address = (isset($_POST['address']) ? $_POST['address'] : '');
-			$port = (isset($_POST['port']) ? (int)$_POST['port'] : 4445);
-			$password = (isset($_POST['password']) ? $_POST['password'] : $ws_config['websend_password']);
 
-			$ws_conf =  '<?php' . PHP_EOL .
-				'$ws_config = array(' . PHP_EOL .
-				'   \'websend_server_address\' => \'' . $address . '\',' . PHP_EOL .
-				'   \'websend_server_port\' => ' . $port . ',' . PHP_EOL .
-				'   \'websend_password\' => \'' . $password . '\'' . PHP_EOL .
-				');';
-
-			if(file_put_contents(ROOT_PATH . '/modules/Websend/config.php', $ws_conf) === false){
-				$errors = array($websend_language->get('language', 'unable_to_create_config'));
-
-			} else {
-				Redirect::to(URL::build('/panel/websend'));
-				die();
-			}
-
-
-		} else
-			$errors = array($language->get('general', 'invalid_token'));
-	}
+    // Send command to console
+    if (isset($_POST['command'])) {
+        $command = $_POST['command'];
+        if(Input::exists() && Token::check(Input::get('token'))) {
+            WSDBInteractions::insertPendingCommand(1, $command);
+        } else {
+            $errors = array($language->get('general', 'invalid_token'));
+        }
+    }
 
 	// Get hooks
 	$hookQuery = $queries->getWhere('websend_commands', array('enabled', '=', 1));
@@ -160,7 +142,7 @@ if(isset($_GET['hook'])){
 		$hooks[] = $hook->hook;
 	}
 
-	$all_hooks = HookHandler::getHooks();
+	$all_hooks = EventHandler::getEvents();
 	$template_hooks = array();
 
 	foreach($all_hooks as $hook => $description){
@@ -171,25 +153,24 @@ if(isset($_GET['hook'])){
 		);
 	}
 
-	if(!isset($ws_config) && file_exists(ROOT_PATH . '/modules/Websend/config.php')){
-		require_once(ROOT_PATH . '/modules/Websend/config.php');
-	}
+    $apiKey = $queries->getWhere('settings', ['name', '=', 'mc_api_key'])[0]->value;
+
+    $cache->setCache('websend_settings');
+    $interval = $cache->retrieve('console_request_interval');
 
 	$smarty->assign(array(
 		'AVAILABLE_HOOKS' => $websend_language->get('language', 'available_hooks'),
-		'HOOKS' => $template_hooks,
 		'ENABLED' => $websend_language->get('language', 'enabled'),
-		'DISABLED' => $websend_language->get('language', 'disabled'),
-		'CONNECTION_DETAILS' => $websend_language->get('language', 'connection_details'),
-		'CONNECTION_ADDRESS' => $websend_language->get('language', 'connection_address'),
-		'CONNECTION_ADDRESS_VALUE' => Output::getClean($ws_config['websend_server_address']),
-		'CONNECTION_PORT' => $websend_language->get('language', 'connection_port'),
-		'CONNECTION_PORT_VALUE' => Output::getClean($ws_config['websend_server_port']),
-		'CONNECTION_PASSWORD' => $websend_language->get('language', 'connection_password')
+        'DISABLED' => $websend_language->get('language', 'disabled'),
+        'HOOK' => $websend_language->get('language', 'hook'),
+        'STATUS' => $websend_language->get('language', 'status'),
+        'TOASTR_SENT' => $websend_language->get('language', 'toastr_sent'),
+		'HOOKS' => $template_hooks,
+        'CONSOLE_URL' => '/queries/console&server_id=1',
+        'REQUEST_INTERVAL' => $interval ?? 5,
 	));
 
 	$template_file = 'websend/websend.tpl';
-
 }
 
 if(isset($success))

@@ -10,7 +10,15 @@
  */
 
 // Language
-$websend_language = new Language(ROOT_PATH . '/modules/Websend/language', LANGUAGE);
+$websend_language = new Language(ROOT_PATH . '/modules/Websend/language');
+
+// Load classes
+spl_autoload_register(function ($class) {
+    $path = join(DIRECTORY_SEPARATOR, array(ROOT_PATH, 'modules', 'Websend', 'classes', $class . '.php'));
+    if (file_exists($path)) {
+        require_once($path);
+    }
+});
 
 require_once(ROOT_PATH . '/modules/Websend/module.php');
-$module = new Websend_Module($pages, $language, $websend_language, $queries, $cache);
+$module = new Websend_Module($pages, $language, $websend_language, $queries, $cache, $endpoints);

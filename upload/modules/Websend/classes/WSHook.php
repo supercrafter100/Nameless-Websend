@@ -10,30 +10,56 @@
  */
 
 class WSHook {
-	private static $_events = array();
-	private static $_ws = null;
 
-	public static function setEvents($events){
-		self::$_events = $events;
-	}
+	private static $events = array();
+    private static $enabled = array();
 
-	public static function initWebsend($conf){
-		self::$_ws = new Websend($conf['websend_server_address'], $conf['websend_server_port']);
-		self::$_ws->setPassword($conf['websend_password']);
-	}
+    public static function setEvent(string $event, string $commands) {
+        self::$events[$event] = explode(PHP_EOL, $commands);
+    }
 
-	public static function execute($params = array()){
-		if(!isset($params['event']) || is_null(self::$_ws)){
+    public static function registerEvents() {
+
+        $query = 'SELECT * FROM nl2_websend_commands WHERE enabled = 1';
+        $results = DB::getInstance()->selectQuery($query)->results();
+
+        foreach ($results as $event) {
+            if (!isset(self::$events[$event->hook])) {
+                EventHandler::registerListener($event->hook, 'WSHook::execute');
+                self::setEvent($event->hook, $event->commands);
+            }
+        }
+    }
+
+    public static function setEnabled(string $event, bool $enabled) {
+        self::$enabled[$event] = $enabled;
+    }
+
+	public static function execute($params = array()) : bool {
+		if(!isset($params['event'])){
 			return false;
 		}
 
-		if(array_key_exists($params['event'], self::$_events)){
-			$event = self::$_events[$params['event']];
+        // Check if we know anything about the event
+        if (!array_key_exists($params['event'], self::$events)) {
+            return false;
+        }
+
+        // Check if the event is enabled
+        if (!self::$enabled[$params['event']] == false) {
+            return false;
+        }
+
+		if(array_key_exists($params['event'], self::$events)){
+			$event = self::$events[$params['event']];
 
 			if(count($event)){
-				$event_params = HookHandler::getHook($params['event']);
+				$event_params = EventHandler::getEvent($params['event']);
+                error_log("[WSHook] Event params: " . json_encode($event_params));
 				$event_params = $event_params['params'];
 
+
+                // Replacing the placeholders
 				$event_param_keys = array();
 				$event_param_values = array();
 				if(count($event_params)){
@@ -43,19 +69,15 @@ class WSHook {
 					}
 				}
 
-				if(self::$_ws->connect()){
-					foreach($event as $command){
-						self::$_ws->doCommandAsConsole(str_ireplace($event_param_keys, $event_param_values, $command));
-					}
-				}
-
-				self::$_ws->disconnect();
-
+                // Adding the commands to the database so the plugin can execute them
+                foreach($event as $command){
+                    $cmd = str_ireplace($event_param_keys, $event_param_values, $command);
+                    WSDBInteractions::insertPendingCommand(1, $cmd);
+                }
 				return true;
 			}
 		}
 
 		return false;
-
 	}
 }

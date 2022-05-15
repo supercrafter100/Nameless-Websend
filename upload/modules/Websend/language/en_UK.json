@@ -1,0 +1,27 @@
+{
+  "language/websend": "Websend",
+  "language/websend_console": "Console",
+  "language/websend_events": "Events",
+  "language/websend_settings": "Settings",
+  "language/available_hooks": "Available Events",
+  "language/enabled": "Enabled",
+  "language/disabled": "Disabled",
+  "language/commands_information": "You can separate commands with a new line. Don't add the <strong>/</strong> at the start of the command. The available variables are as follows:",
+  "language/commands": "Commands",
+  "language/enable_hook": "Enable Event?",
+  "language/hook": "Event",
+  "language/hooks": "Events",
+  "language/status": "Status",
+  "language/settings": "Settings",
+  "language/toastr_sent": "Successfully sent the command to your server",
+  "language/hook_updated_successfully": "Event updated successfully",
+
+  "language/settings_console_max_lines": "Maximum records in database",
+  "language/settings_console_request_interval": "Console request interval (in seconds)",
+  "language/settings_max_displayed_records": "Maximum displayed lines in the console (in seconds)",
+  "language/settings_updated_successfully": "The websend settings have been updated successfully",
+
+  "language/missing_maxconsolerecords": "Please enter the maximum records that should be kept in the database",
+  "language/missing_consolerequestinterval": "Please enter the interval in seconds between the requests to the backend for the console",
+  "language/missing_maxdisplayedrecords": "Please enter the maximum number of lines that should be displayed in the console"
+}

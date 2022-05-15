@@ -1,10 +1,14 @@
 {include file='header.tpl'}
-<body class="hold-transition sidebar-mini">
-<div class="wrapper">
-    {include file='navbar.tpl'}
+
+<body id="page-top">
+
+<div id="wrapper">
+
     {include file='sidebar.tpl'}
 
-    <div class="content-wrapper">
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        {include file='navbar.tpl'}
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
@@ -112,11 +116,11 @@
         </section>
     </div>
 
-    {include file='footer.tpl'}
 
 </div>
 <!-- ./wrapper -->
 
+{include file='footer.tpl'}
 {include file='scripts.tpl'}
 
 </body>
