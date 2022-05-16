@@ -15,6 +15,12 @@ require_once(ROOT_PATH . '/core/templates/backend_init.php');
 // Load modules + template
 Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp_nav], $widgets, $template);
 
+$server_id = $_GET['id'];
+if (!isset($server_id) || !is_numeric($server_id)) {
+    Redirect::to(URL::build('/panel/websend/servers'));
+}
+$server_id = intval($server_id);
+
 // If no hook is present in the URL, redirect to the hooks page
 if (!isset($_GET['hook']) || sizeof(EventHandler::getEvent($_GET['hook'])) == 0) {
     header('Location: ' . URL::build('/panel/websend/hooks'));
@@ -23,35 +29,50 @@ if (!isset($_GET['hook']) || sizeof(EventHandler::getEvent($_GET['hook'])) == 0)
 
 // Get the hook data
 $hook = EventHandler::getEvent($_GET['hook']);
-$db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])))[0];
+
+$db_hook = DB::getInstance()->query("SELECT * FROM nl2_websend_commands WHERE hook = ? AND server_id = ?", [$_GET['hook'], $server_id])->first();
+//$db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])))[0];
 
 
 // Check if data got posted to the website
 if (Input::exists() && Token::check(Input::get('token'))) {
 
     $enabled = $_POST['enable_hook'];
-    $commands = $_POST['commands'] ?? '';
+    $commands = [];
+
+    $commandId = 1;
+    while (true) {
+        if (isset($_POST['cmd' . $commandId])) {
+            $commands[] = $_POST['cmd' . $commandId];
+            $commandId++;
+        } else {
+            break;
+        }
+    }
+    $commands = implode('\n', $commands);
 
     // Update the data in the database
     if (is_null($db_hook)) {
         $queries->create('websend_commands', array(
             'hook' => $_GET['hook'],
             'commands' => $commands,
-            'enabled' => $enabled
+            'enabled' => $enabled,
+            'server_id' => $server_id
         ));
     } else {
-        $queries->update('websend_commands', $db_hook->id, array(
-            'commands' => $commands,
-            'enabled' => $enabled
-        ));
+        DB::getInstance()->query("UPDATE nl2_websend_commands SET commands = ?, enabled = ? WHERE hook = ? AND server_id = ?", [$commands, $enabled, $_GET['hook'], $server_id]);
+        //$queries->update('websend_commands', "$db_hook->id", array(
+        //    'commands' => $commands,
+        //    'enabled' => $enabled
+        //));
     }
 
     // Update the data in the hook handler
-    WSHook::setEvent($_GET['hook'], $commands);
+    WSHook::setEvent($_GET['hook'], $server_id, $commands);
+    WSHook::setEnabled($_GET['hook'], $server_id, $enabled);
 
     // Update the db_hook variable with the latest data
     $db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])))[0];
-
     $success = $websend_language->get('language', 'hook_updated_successfully');
 }
 
@@ -74,7 +95,8 @@ $smarty->assign(array(
     'COMMANDS_VALUE' => (!is_null($db_hook)) ? Output::getClean($db_hook->commands) : '',
     'INFO' => $language->get('general', 'info'),
     'BACK' => $language->get('general', 'back'),
-    'BACK_LINK' => URL::build('/panel/websend/hooks')
+    'BACK_LINK' => URL::build('/panel/websend/hooks', '&id=' . $server_id),
+    'PHP_EOL' => '\n',
 ));
 
 // Success

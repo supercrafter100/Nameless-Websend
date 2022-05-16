@@ -7,6 +7,7 @@
   "language/enabled": "Enabled",
   "language/disabled": "Disabled",
   "language/commands_information": "You can separate commands with a new line. Don't add the <strong>/</strong> at the start of the command. The available variables are as follows:",
+  "language/servers-list": "Select a server that you want to manage the events for, you can configure more servers in staffcp > integrations > minecraft > minecraft servers",
   "language/commands": "Commands",
   "language/enable_hook": "Enable Event?",
   "language/hook": "Event",

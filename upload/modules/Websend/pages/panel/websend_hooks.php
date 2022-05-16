@@ -15,20 +15,28 @@ require_once(ROOT_PATH . '/core/templates/backend_init.php');
 // Load modules + template
 Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp_nav], $widgets, $template);
 
+$server_id = $_GET['id'];
+if (!isset($server_id) || !is_numeric($server_id)) {
+    Redirect::to(URL::build('/panel/websend/servers'));
+}
+$server_id = intval($server_id);
+
 // Get all available hooks
 $hooks = EventHandler::getEvents();
 
 // Get all enabled hooks
-$enabled_hooks = $queries->getWhere('websend_commands', [
-    'enabled', '=', 1
-]);
+$enabled_hooks = DB::getInstance()->query("SELECT * FROM nl2_websend_commands WHERE enabled = 1 AND server_id = ?", [$server_id])->results();
+//$enabled_hooks = $queries->getWhere('websend_commands', [
+//    'enabled', '=', 1,
+//    'server_id', '=', $server_id
+//]);
 $enabled_hooks = array_map(fn($item) => $item->hook, $enabled_hooks);
 
 // Make proper object that can be read by the website afterwards
 $mapped_hooks = [];
 foreach($hooks as $hook => $description) {
     $mapped_hooks[] = [
-        'link' => URL::build('/panel/websend/hooks/edit', 'hook=' . Output::getClean($hook)),
+        'link' => URL::build('/panel/websend/hooks/edit', 'hook=' . Output::getClean($hook) . '&id=' . $server_id),
         'description' => Output::getClean($description),
         'enabled' => in_array($hook, $enabled_hooks)
     ];
@@ -46,6 +54,8 @@ $smarty->assign([
     'HOOK' => $websend_language->get('language', 'hook'),
     'STATUS' => $websend_language->get('language', 'status'),
     'HOOKS' => $mapped_hooks,
+    'BACK' => $language->get('general', 'back'),
+    'BACK_LINK' => URL::build('/panel/websend/servers'),
 ]);
 
 // Success

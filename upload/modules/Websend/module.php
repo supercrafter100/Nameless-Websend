@@ -28,11 +28,12 @@ class Websend_Module extends Module {
 
 		// Define URLs which belong to this module
 		$pages->add('Websend', '/panel/websend', 'pages/panel/websend.php');
+        $pages->add('Websend', '/panel/websend/servers', 'pages/panel/websend_servers.php');
         $pages->add('Websend', '/panel/websend/hooks', 'pages/panel/websend_hooks.php');
         $pages->add('Websend', '/panel/websend/hooks/edit', 'pages/panel/websend_hooks_edit.php');
         $pages->add('Websend', '/panel/websend/settings', 'pages/panel/websend_settings.php');
         $pages->add('Websend', '/queries/console', 'queries/GetConsoleContent.php');
-
+        $pages->add('Websend', '/queries/console/clear', 'queries/ClearConsole.php');
 
         // Loading API endpoins
         $endpoints->loadEndpoints(join(DIRECTORY_SEPARATOR, array(ROOT_PATH, 'modules', 'Websend', 'includes', 'endpoints')), $endpoints);
@@ -64,7 +65,7 @@ class Websend_Module extends Module {
 
         if (!$queries->tableExists('websend_commands')) {
             try {
-                $queries->createTable('websend_commands', ' `id` int(11) NOT NULL AUTO_INCREMENT, `hook` varchar(64) NOT NULL, `commands` mediumtext NOT NULL, `enabled` tinyint(1) NOT NULL DEFAULT \'0\', PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
+                $queries->createTable('websend_commands', ' `id` int(11) NOT NULL AUTO_INCREMENT, `hook` varchar(64) NOT NULL, `server_id` int(11) NOT NULL, `commands` mediumtext NOT NULL, `enabled` tinyint(1) NOT NULL DEFAULT \'0\', PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
             } catch (Exception $e) {
                 // Error
             }
@@ -177,23 +178,23 @@ class Websend_Module extends Module {
                 $navs[2]->add('websend_divider', mb_strtoupper($this->_websend_language->get('language', 'websend')), 'divider', 'top', null, $order, '');
 
                 // Add the navigation links
-                if ($user->hasPermission('admincp.websend.console')) {
-                    $main_icon = $cache->isCached('websend_icon_main') ? $cache->retrieve('websend_icon_main') : '<i class="nav-icon fas fa-terminal"></i>';
-                    $cache->store('websend_icon_main', $main_icon);
-                    $navs[2]->add('websend_main', $this->_websend_language->get('language', 'websend_console'), URL::build('/panel/websend'), 'top', null, ($order + 0.1), $main_icon);
-                }
+                //if ($user->hasPermission('admincp.websend.console')) {
+                //    $main_icon = $cache->isCached('websend_icon_main') ? $cache->retrieve('websend_icon_main') : '<i class="nav-icon fas fa-terminal"></i>';
+                //    $cache->store('websend_icon_main', $main_icon);
+                //    $navs[2]->add('websend_main', $this->_websend_language->get('language', 'websend_console'), URL::build('/panel/websend'), 'top', null, ($order + 0.1), $main_icon);
+                //}
 
                 if ($user->hasPermission('admincp.websend.events')) {
                     $hooks_icon = $cache->isCached('websend_icon_hooks') ? $cache->retrieve('websend_icon_hooks') : '<i class="nav-icon fas fa-bell"></i>';
                     $cache->store('websend_icon_hooks', $hooks_icon);
-                    $navs[2]->add('websend_hooks', $this->_websend_language->get('language', 'websend_events'), URL::build('/panel/websend/hooks'), 'top', null, ($order + 0.2), $hooks_icon);
+                    $navs[2]->add('websend_hooks', $this->_websend_language->get('language', 'websend_events'), URL::build('/panel/websend/servers'), 'top', null, ($order + 0.2), $hooks_icon);
                 }
 
-                if ($user->hasPermission('admincp.websend.settings')) {
-                    $settings_icon = $cache->isCached('websend_icon_settings') ? $cache->retrieve('websend_icon_settings') : '<i class="nav-icon fas fa-cogs"></i>';
-                    $cache->store('websend_icon_settings', $settings_icon);
-                    $navs[2]->add('websend_settings', $this->_websend_language->get('language', 'websend_settings'), URL::build('/panel/websend/settings'), 'top', null, ($order + 0.3), $settings_icon);
-                }
+                //if ($user->hasPermission('admincp.websend.settings')) {
+                //    $settings_icon = $cache->isCached('websend_icon_settings') ? $cache->retrieve('websend_icon_settings') : '<i class="nav-icon fas fa-cogs"></i>';
+                //    $cache->store('websend_icon_settings', $settings_icon);
+                //    $navs[2]->add('websend_settings', $this->_websend_language->get('language', 'websend_settings'), URL::build('/panel/websend/settings'), 'top', null, ($order + 0.3), $settings_icon);
+                //}
             }
 		}
 	}

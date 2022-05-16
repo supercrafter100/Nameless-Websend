@@ -48,7 +48,7 @@
                                 <input value="1" type="checkbox" name="enable_hook" id="inputEnable" class="custom-control-input" {if $HOOK_ENABLED}checked {/if} />
                                 <label class="custom-control-label" for="inputEnable">{$ENABLE_HOOK}</label>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="command-group">
                                 <div class="callout callout-info">
                                     <h5><i class="icon fa fa-info-circle"></i> {$INFO}</h5>
                                     {$COMMANDS_INFO}
@@ -60,10 +60,12 @@
                                         </ul>
                                     {/if}
                                 </div>
-                                <label for="inputCommands">{$COMMANDS}</label>
-                                <textarea id="inputCommands" name="commands" class="form-control">{$COMMANDS_VALUE}</textarea>
+                                <!-- Commands get automatically put here-->
+
+
                             </div>
-                            <div class="form-group">
+                            <div class="form-group btn-group">
+                                <button class="btn btn-success" type="button" onclick="addCommand()">Add command</button>
                                 <input type="hidden" name="token" value="{$TOKEN}">
                                 <input type="submit" class="btn btn-primary" value="{$SUBMIT}">
                             </div>
@@ -90,4 +92,60 @@
 
 <!-- Scripts -->
 {include file='scripts.tpl'}
+
+<script>
+    $(document).ready(() => {
+
+        // Load existing commands
+        const cmds = `{$COMMANDS_VALUE}`;
+        if (cmds.length > 0) {
+            const cmds_array = cmds.trim().split("{$PHP_EOL}");
+
+            for (let i = 0; i < cmds_array.length; i++) {
+                addCommand(cmds_array[i]);
+            }
+        } else {
+            addCommand()
+        }
+    })
+
+    function addCommand(command = "") {
+        const $cmdGroup = $('#command-group');
+        const cmdAmount = $cmdGroup.find('input').length;
+
+        {literal}
+        const label = `<label for="cmd${cmdAmount + 1}" id="cmd${cmdAmount + 1}-label">Command ${cmdAmount + 1}</label>`;
+        const input = ` <div class="input-group">
+                            <input type="text" id="cmd${cmdAmount + 1}" name="cmd${cmdAmount + 1}" class="form-control">
+                            <button class="btn btn-outline-danger" type="button" onclick="removeCommand(${cmdAmount + 1})">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>`;
+
+        const element = `<div class="form-group commandElement">${label}${input}</div>`;
+        $cmdGroup.append(element);
+
+        $(`#cmd${cmdAmount + 1}`).val(command);
+        {/literal}
+    }
+
+    function removeCommand(id) {
+        {literal}
+        $(`#cmd${id}`).parent().parent().remove();
+        {/literal}
+        const cmdGroup = $('#command-group');
+        const cmds = cmdGroup.find('input');
+
+        const cmds_array = [];
+        for (let i = 0; i < cmds.length; i++) {
+            cmds_array.push($(cmds[i]).val());
+        }
+        $('.commandElement').remove();
+        for (const cmd of cmds_array) {
+            addCommand(cmd);
+        }
+    }
+
+
+</script>
 </body>

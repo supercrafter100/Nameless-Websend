@@ -34,8 +34,15 @@
                         <!-- Success and Error Messages -->
                         {include file='includes/alerts.tpl'}
 
+
                         <!-- Websend hooks -->
-                        <h5>{$AVAILABLE_HOOKS}</h5>
+                        <h5 style="display: inline">{$AVAILABLE_HOOKS}</h5>
+                        <div class="float-md-right">
+                            <a class="btn btn-primary" href="{$BACK_LINK}">{$BACK}</a>
+                        </div>
+
+                        <hr />
+
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
