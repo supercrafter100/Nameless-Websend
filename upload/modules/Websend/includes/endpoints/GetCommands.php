@@ -21,8 +21,7 @@ class GetCommands extends KeyAuthEndpoint {
         }
 
         // Mark the commands as processed
-        $api->getDb()->query('UPDATE nl2_websend_pending_commands SET status = 1');
-
+        $api->getDb()->query('UPDATE nl2_websend_pending_commands SET status = 1 WHERE server_id = ?', [$_GET['server_id']]);
         $api->returnArray(array('commands' => $commands_array));
     }
 }

@@ -36,8 +36,8 @@ class WSDBInteractions {
 
         $max_lines = $cache->retrieve('console_max_lines');
 
-        $query = "DELETE FROM nl2_websend_console_output WHERE id < (SELECT max(id) FROM nl2_websend_console_output) - ?";
-        DB::getInstance()->createQuery($query, [$max_lines ?? 500]);
+        $query = "DELETE FROM nl2_websend_console_output WHERE id < (SELECT MAX(id) FROM nl2_websend_console_output) - ?";
+        DB::getInstance()->query($query, [$max_lines ?? 500]);
     }
 
     public static function insertPendingCommand($id, $command) : void {
@@ -50,7 +50,7 @@ class WSDBInteractions {
 
     public static function getPendingCommands($id) : array {
         $query = "SELECT * FROM `nl2_websend_pending_commands` WHERE `server_id` = ? AND `status` = 0";
-        return DB::getInstance()->selectQuery($query, [
+        return DB::getInstance()->query($query, [
             (int) $id
         ])->results();
     }

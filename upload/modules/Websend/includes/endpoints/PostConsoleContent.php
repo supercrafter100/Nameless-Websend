@@ -23,8 +23,7 @@ class PostConsoleContent extends KeyAuthEndpoint {
         }
 
         // If database size is too long, delete the oldest lines with the lowest id
-        $max_lines = 500;
-        WSDBInteractions::deleteOversizedConsoleLines($max_lines);
+        WSDBInteractions::deleteOversizedConsoleLines();
 
         // Return the response
         $api->returnArray(array('success' => true));

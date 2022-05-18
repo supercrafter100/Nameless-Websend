@@ -23,8 +23,7 @@ $server_id = intval($server_id);
 
 // If no hook is present in the URL, redirect to the hooks page
 if (!isset($_GET['hook']) || sizeof(EventHandler::getEvent($_GET['hook'])) == 0) {
-    header('Location: ' . URL::build('/panel/websend/hooks'));
-    die();
+    Redirect::to(URL::build('/panel/websend/hooks'));
 }
 
 // Get the hook data
@@ -72,7 +71,8 @@ if (Input::exists() && Token::check(Input::get('token'))) {
     WSHook::setEnabled($_GET['hook'], $server_id, $enabled);
 
     // Update the db_hook variable with the latest data
-    $db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])))[0];
+    //$db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])))[0];
+    $db_hook = DB::getInstance()->query("SELECT * FROM nl2_websend_commands WHERE hook = ? AND server_id = ?", [$_GET['hook'], $server_id])->first();
     $success = $websend_language->get('language', 'hook_updated_successfully');
 }
 

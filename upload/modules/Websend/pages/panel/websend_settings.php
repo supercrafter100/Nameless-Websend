@@ -19,9 +19,8 @@ Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp
 if (Input::exists()) {
     if (Token::check()) {
 
-        $validate = new Validate();
 
-        $validation = $validate->check($_POST, [
+        $validation = Validate::check($_POST, [
            'maxConsoleRecords' => [
                Validate::REQUIRED => true,
                Validate::NUMERIC => true
@@ -87,6 +86,7 @@ if (Input::exists()) {
         $errors = [$language->get('general', 'invalid_token')];
     }
 }
+
 
 // Get all the settings
 $console_max_lines = $queries->getWhere('websend_settings', ['name', '=', 'console_max_lines']);

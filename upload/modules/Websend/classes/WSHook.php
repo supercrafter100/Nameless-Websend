@@ -16,7 +16,6 @@ class WSHook {
 
     public static function setEvent(string $event, int $server, string $commands) {
         self::$events[$event][$server] = explode('\n', $commands);
-        error_log(json_encode(self::$events[$event][$server]));
     }
 
     public static function registerEvents() {
@@ -27,6 +26,10 @@ class WSHook {
         foreach ($results as $event) {
             if (!isset(self::$events[$event->hook])) {
                 EventHandler::registerListener($event->hook, 'WSHook::execute');
+                self::$events[$event->hook] = [];
+            }
+
+            if (!isset(self::$events[$event->hook][$event->server_id])) {
                 self::setEvent($event->hook, $event->server_id, $event->commands);
             }
         }
