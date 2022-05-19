@@ -68,37 +68,24 @@
                             <div class="card-body">
 
                                 <!-- Server console -->
-                                <div id="terminal" class="ui centered card form-control" style="height: calc(100vh - 200px); ">
-                                    <div class="card-header">
-                                        <h5 class="d-flex justify-content-between">Server Console</h5>
+                                <div class="card mb-3 terminal">
+                                    <div class="card-header terminal-element">
+                                        <h5 class="d-flex justify-content-between">Terminal<span class="terminal-status"><div class="circle status-online" id="active-status-indicator"></div></span></h5>
                                     </div>
-                                    <div id="console" class="card-body" style="background-color: hsla(0, 0%, 10%, 1.00); white-space: pre-wrap; overflow-y: scroll; overflow-x: hidden; height: 100%; font-size: 0.8em; font-family: monospace;"></div>
-                                </div>
-
-                                <!-- Spacing -->
-                                <div style="height:1rem;"></div>
-
-                                <div id="commandline" class="ui centered card">
-                                    <div class="content">
-                                        <div class="ui form">
+                                    <div class="card-body terminal-element terminal-logs" id="console">Logs should appear here, it seems something is wrong.</div>
+                                    <div class="card-body terminal-element terminal-input d-flex justify-content-between">
+                                        <span><span id="terminal-container-name">container</span>:~/$ </span>
+                                        <div class="terminal-element terminal-input-field">
                                             <form id="command_post" action="" method="post">
-                                                <div class="field">
-                                                    <div class="form-group">
-                                                        <label for="command">Enter command (without /)</label>
-                                                        <input id="command" name="command" type="text" class="form-control" placeholder="{$COMMAND_LINE}">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input type="hidden" name="token" value="{$TOKEN}">
-                                                        <input type="submit" class="btn btn-primary" value="{$SUBMIT}">
-                                                    </div>
-                                                </div>
+                                                <input type="text" name="command" class="terminal-input-form" placeholder="" autofocus>
+                                                <input type="hidden" name="token" value="{$TOKEN}">
                                             </form>
                                         </div>
+                                        <div class="terminal-element terminal-input-send" id="command-send-button" onClick="javascript:this.parentNode.submit()"><i class="fa fa-paper-plane"></i></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <!-- Spacing -->
                         <div style="height:1rem;"></div>
                     </div>
@@ -120,7 +107,7 @@
 
         // Check if user is scrolled up
         const isScrolledToBottom = console.scrollHeight - console.clientHeight + 1;
-        console.innerHTML = response.join('<br />');
+        console.innerHTML = response.map((line) => `<p class="console">${line}</p>`).join('');
 
         if (isScrolledToBottom) {
             console.scrollTop = console.scrollHeight;

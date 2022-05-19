@@ -20,7 +20,7 @@ class Websend_Module extends Module {
         $this->_endpoints = $endpoints;
 
 		$name = 'Websend';
-		$author = '<a href="https://samerton.me" target="_blank" rel="nofollow noopener">Samerton</a>';
+		$author = '<a href="https://github.com/supercrafter100/" target="_blank" rel="nofollow noopener">Supercrafter100</a>';
 		$module_version = '1.1.2';
 		$nameless_version = '2.0.0-pr13';
 
