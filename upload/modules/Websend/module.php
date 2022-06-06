@@ -180,13 +180,13 @@ class Websend_Module extends Module {
                 if ($user->hasPermission('admincp.websend.console')) {
                     $main_icon = $cache->isCached('websend_icon_main') ? $cache->retrieve('websend_icon_main') : '<i class="nav-icon fas fa-terminal"></i>';
                     $cache->store('websend_icon_main', $main_icon);
-                    $navs[2]->add('websend_main', $this->_websend_language->get('language', 'websend_console'), URL::build('/panel/websend'), 'top', null, ($order + 0.1), $main_icon);
+                    $navs[2]->add('websend_main', $this->_websend_language->get('language', 'websend_console'), URL::build('/panel/websend/servers&to=/panel/websend'), 'top', null, ($order + 0.1), $main_icon);
                 }
 
                 if ($user->hasPermission('admincp.websend.events')) {
                     $hooks_icon = $cache->isCached('websend_icon_hooks') ? $cache->retrieve('websend_icon_hooks') : '<i class="nav-icon fas fa-bell"></i>';
                     $cache->store('websend_icon_hooks', $hooks_icon);
-                    $navs[2]->add('websend_hooks', $this->_websend_language->get('language', 'websend_events'), URL::build('/panel/websend/servers'), 'top', null, ($order + 0.2), $hooks_icon);
+                    $navs[2]->add('websend_hooks', $this->_websend_language->get('language', 'websend_events'), URL::build('/panel/websend/servers&to=/panel/websend/hooks'), 'top', null, ($order + 0.2), $hooks_icon);
                 }
 
                 if ($user->hasPermission('admincp.websend.settings')) {

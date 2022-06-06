@@ -22,6 +22,10 @@ const PANEL_PAGE = "panel";
 $page_title = $websend_language->get('language', 'websend');
 require_once(ROOT_PATH . '/core/templates/backend_init.php');
 
+// Get the redirect url
+$path = $_GET['to'];
+
+
 // Load modules + template
 Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp_nav], $widgets, $template);
 
@@ -40,7 +44,7 @@ if (count($servers)) {
             'name' => Output::getClean($server->name),
             'id' => Output::getClean($server->id),
             'server_id' => $language->get('admin', 'server_id_x', ['serverId' => Output::getClean($server->id)]),
-            'edit_link' => URL::build('/panel/websend/hooks/', 'id=' . urlencode($server->id)),
+            'edit_link' => URL::build($path, 'id=' . urlencode($server->id)),
             'is_default' => $server->is_default
         ];
     }

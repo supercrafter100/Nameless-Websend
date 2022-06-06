@@ -18,13 +18,13 @@ if(!$user->handlePanelPageLoad('admincp.websend')) {
 }
 
 
-$server_id = $_GET['server_id'];
+$server_id = $_GET['id'];
 if (!is_numeric($server_id)) {
     die('Invalid server id');
 }
 
 // Save the output to cache so we can retrieve it again later
-$lines = WSDBInteractions::getConsoleOutput($server_id);
+$lines = WSDBInteractions::getConsoleOutput(intval($server_id));
 
 // Return the response
 die(json_encode(['content' => $lines]));

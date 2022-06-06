@@ -27,7 +27,7 @@ Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp
 
 $server_id = $_GET['id'];
 if (!isset($server_id) || !is_numeric($server_id)) {
-    Redirect::to(URL::build('/panel/websend/servers'));
+    Redirect::to(URL::build('/panel/websend/servers&to=/panel/websend/hooks'));
 }
 $server_id = intval($server_id);
 

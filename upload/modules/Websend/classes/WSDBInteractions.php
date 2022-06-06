@@ -18,12 +18,14 @@ class WSDBInteractions {
         $cache = new Cache(['name' => 'nameless', 'extension' => '.cache', 'path' => ROOT_PATH . '/cache/']);
         $cache->setCache('websend_settings');
 
-        $max_lines = $cache->retrieve('max_displayed_records');
+        $max_lines = $cache->isCached('max_displayed_records') ? $cache->retrieve('max_displayed_records') : DB::getInstance()->get('websend_settings', ['name', 'max_displayed_records'])->first();
+        $cache->store('max_displayed_records', $max_lines);
 
-        $lines = DB::getInstance()->get('SELECT content FROM `nl2_websend_console_output` WHERE `server_id` = ? ORDER BY `id` LIMIT ?', [
-            (int) $id,
-            (int) $max_lines ?? 200
+        $lines = DB::getInstance()->query('SELECT content FROM `nl2_websend_console_output` WHERE `server_id` = ? ORDER BY `id` LIMIT ?', [
+            $id,
+            $max_lines ?? 200
         ])->results();
+
         return array_map(fn($item) => $item->content, $lines);
     }
 
@@ -42,6 +44,9 @@ class WSDBInteractions {
         // Get cached value
         $cache = new Cache(['name' => 'nameless', 'extension' => '.cache', 'path' => ROOT_PATH . '/cache/']);
         $cache->setCache('websend_settings');
+
+        $max_lines = $cache->isCached('console_max_lines') ? $cache->retrieve('console_max_lines') : DB::getInstance()->get('websend_settings', ['name', 'console_max_lines'])->first();
+        $cache->store('console_max_lines', $max_lines);
 
         $max_lines = $cache->retrieve('console_max_lines');
         DB::getInstance()->query('DELETE FROM nl2_websend_console_output WHERE id < (SELECT MAX(id) FROM nl2_websend_console_output) - ?', [$max_lines ?? 500]);
