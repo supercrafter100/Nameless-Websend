@@ -2,7 +2,7 @@
 Send commands from your website to your Minecraft server using the Websend plugin
 
 ## Requirements
-- NamelessMC version 2 pre-release 11+
+- NamelessMC version 2 pre-release 13+
 - [NamelessMC plugin](https://www.spigotmc.org/resources/nameless-plugin-for-v2.59032/)
 
 ## Installation
