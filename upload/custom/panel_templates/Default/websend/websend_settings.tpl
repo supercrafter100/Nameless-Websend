@@ -51,7 +51,7 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label for="maxDisplayedRecords">{$TERM_CONSOLE_MAX_LINES}</label>
+                                        <label for="maxDisplayedRecords">{$TERM_MAX_DISPLAYED_RECORDS}</label>
                                         <input type="number" class="form-control" id="maxDisplayedRecords" name="maxDisplayedRecords"
                                                placeholder="{$TERM_MAX_DISPLAYED_RECORDS}" value="{$SETTINGS_MAX_DISPLAYED_RECORDS}">
                                     </div>

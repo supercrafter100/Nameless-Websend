@@ -48,7 +48,7 @@ class WSDBInteractions {
         $max_lines = $cache->isCached('console_max_lines') ? $cache->retrieve('console_max_lines') : DB::getInstance()->get('websend_settings', ['name', 'console_max_lines'])->first();
         $cache->store('console_max_lines', $max_lines);
 
-        $max_lines = $cache->retrieve('console_max_lines');
+        // TODO: Make it so this is server id specific. Maybe ask Derkades for help on the query with this one?
         DB::getInstance()->query('DELETE FROM nl2_websend_console_output WHERE id < (SELECT MAX(id) FROM nl2_websend_console_output) - ?', [$max_lines ?? 500]);
     }
 

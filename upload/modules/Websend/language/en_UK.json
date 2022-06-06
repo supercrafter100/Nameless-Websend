@@ -19,7 +19,7 @@
 
   "language/settings_console_max_lines": "Maximum records in database",
   "language/settings_console_request_interval": "Console request interval (in seconds)",
-  "language/settings_max_displayed_records": "Maximum displayed lines in the console (in seconds)",
+  "language/settings_max_displayed_records": "Maximum displayed lines in the console",
   "language/settings_updated_successfully": "The websend settings have been updated successfully",
 
   "language/missing_maxconsolerecords": "Please enter the maximum records that should be kept in the database",
