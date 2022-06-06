@@ -79,7 +79,7 @@ class WSHook {
             foreach($event as $server_id => $commands){
 
                 // Check if the event is enabled
-                if (self::$enabled[$params['event'][$server_id]] == false) {
+                if (self::$enabled[$params['event']][$server_id] == false) {
                     continue;
                 }
 
