@@ -33,7 +33,7 @@ Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp
 if (isset($_POST['command'])) {
     $command = $_POST['command'];
     if(Input::exists() && Token::check(Input::get('token'))) {
-        WSDBInteractions::insertPendingCommand(1, $command);
+        WSDBInteractions::insertPendingCommand($server_id, $command);
     } else {
         $errors = array($language->get('general', 'invalid_token'));
     }

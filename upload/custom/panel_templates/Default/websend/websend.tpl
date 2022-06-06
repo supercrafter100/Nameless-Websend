@@ -107,18 +107,35 @@
 
 <script>
     {literal}
+    let index = 0;
+    let firstRequest = true;
+
     async function makeRequest() {
 
-        const response = await fetch('{/literal}{$CONSOLE_URL}{literal}').then((res) => res.json()).then((res) => res.content);
-        const console = document.getElementById('console');
+        const res = await fetch(`{/literal}{$CONSOLE_URL}&index={literal}${index}`).then((res) => res.json());
 
-        // Check if user is scrolled up
-        const isScrolledToBottom = console.scrollHeight - console.clientHeight + 1;
-        console.innerHTML = response.map((line) => `<p class="console">${line}</p>`).join('');
+        const response = res.content;
+        index = !isNaN(parseInt(res.index)) ? parseInt(res.index) + 1 : index;
 
-        if (isScrolledToBottom) {
-            console.scrollTop = console.scrollHeight;
+        if (response.length === 0) {
+            return;
         }
+
+        const console = document.getElementById('console');
+        const jConsole = $(console);
+
+        // Check if user is currently scrolled to the bottom before adding the new content
+        let scrollToBottom = false;
+        if (jConsole.scrollTop() + jConsole.innerHeight() >= jConsole[0].scrollHeight) {
+            scrollToBottom = true;
+        }
+
+        if (firstRequest) console.innerHTML = "";
+
+        console.innerHTML += response.map((line) => `<p class="console">${line}</p>`).join('');
+
+        if (scrollToBottom || firstRequest) console.scrollTop = console.scrollHeight;
+        firstRequest = false;
     }
 
     makeRequest();

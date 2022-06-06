@@ -23,8 +23,10 @@ if (!is_numeric($server_id)) {
     die('Invalid server id');
 }
 
+$startIndex = $_GET['index'] ?? 0;
+
 // Save the output to cache so we can retrieve it again later
-$lines = WSDBInteractions::getConsoleOutput(intval($server_id));
+[$lines, $index] = WSDBInteractions::getConsoleOutput(intval($server_id), $startIndex);
 
 // Return the response
-die(json_encode(['content' => $lines]));
+die(json_encode(['content' => $lines, 'index' => $index]));

@@ -27,14 +27,16 @@ class PostConsoleContent extends KeyAuthEndpoint {
             return;
         }
 
+        // Check if the database has to be cleared due to a server startup
+        if (isset($_POST['clear_previous']) && $_POST['clear_previous'] == true) {
+            DB::getInstance()->query('DELETE FROM nl2_websend_console_output WHERE server_id = ?', [$server_id]);
+        }
+
         // Save everything in the database
         $lines = $_POST['content'];
         foreach ($lines as $line) {
             WSDBInteractions::insertConsoleLine($server_id, $line);
         }
-
-        // If database size is too long, delete the oldest lines with the lowest id
-        WSDBInteractions::deleteOversizedConsoleLines();
 
         // Return the response
         $api->returnArray(['success' => true]);
