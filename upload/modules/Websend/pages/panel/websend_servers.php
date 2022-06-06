@@ -1,12 +1,13 @@
 <?php
 /*
- *	Made by Supercrafter100
- *  https://github.com/NamelessMC/Nameless/
- *  NamelessMC version 2.0.0-pr6
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
  *
  *  License: MIT
  *
- *  Websend server selection
+ *  Websend servers page
  */
 
 // Can the user view the panel?
@@ -25,7 +26,7 @@ require_once(ROOT_PATH . '/core/templates/backend_init.php');
 Module::loadPage($user, $pages, $cache, $smarty, [$navigation, $cc_nav, $staffcp_nav], $widgets, $template);
 
 // Get all available servers
-$servers = $queries->orderAll('mc_servers', '`order`', 'ASC');
+$servers = DB::getInstance()->orderAll('mc_servers', '`order`', 'ASC')->results();
 $default = 0;
 $template_array = [];
 

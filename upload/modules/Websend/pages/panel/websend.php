@@ -6,7 +6,7 @@
  *
  *  License: MIT
  *
- *  Websend configuration page
+ *  Websend home page
  */
 
 // Can the user view the panel?

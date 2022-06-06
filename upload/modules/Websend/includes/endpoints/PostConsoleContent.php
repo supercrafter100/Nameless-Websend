@@ -1,4 +1,15 @@
 <?php
+/*
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
+ *
+ *  License: MIT
+ *
+ *  Api route for posting console content about a server
+ */
+
 class PostConsoleContent extends KeyAuthEndpoint {
 
     public function __construct() {
@@ -12,7 +23,7 @@ class PostConsoleContent extends KeyAuthEndpoint {
     {
         $server_id = $_POST['server_id'];
         if (!is_numeric($server_id)) {
-            $api->throwError(6, 'Invalid server_id');
+            $api->throwError(WebsendApiErrors::ERROR_INVALID_SERVER_ID, 'Invalid server_id');
             return;
         }
 
@@ -26,6 +37,6 @@ class PostConsoleContent extends KeyAuthEndpoint {
         WSDBInteractions::deleteOversizedConsoleLines();
 
         // Return the response
-        $api->returnArray(array('success' => true));
+        $api->returnArray(['success' => true]);
     }
 }

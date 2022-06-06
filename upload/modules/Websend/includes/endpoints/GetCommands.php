@@ -1,4 +1,15 @@
 <?php
+/*
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
+ *
+ *  License: MIT
+ *
+ *  Api route for requesting pending commands of a server
+ */
+
 class GetCommands extends KeyAuthEndpoint {
 
     public function __construct() {
@@ -12,7 +23,7 @@ class GetCommands extends KeyAuthEndpoint {
     {
         $dbCommands = WSDBInteractions::getPendingCommands($_GET['server_id']);
 
-        $commands_array = array();
+        $commands_array = [];
         foreach($dbCommands as $command) {
             $commands_array[] = array(
                 'id' => $command->id,
@@ -22,6 +33,6 @@ class GetCommands extends KeyAuthEndpoint {
 
         // Mark the commands as processed
         $api->getDb()->query('UPDATE nl2_websend_pending_commands SET status = 1 WHERE server_id = ?', [$_GET['server_id']]);
-        $api->returnArray(array('commands' => $commands_array));
+        $api->returnArray(['commands' => $commands_array]);
     }
 }

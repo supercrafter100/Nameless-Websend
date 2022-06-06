@@ -1,4 +1,14 @@
 <?php
+/*
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
+ *
+ *  License: MIT
+ *
+ *  Websend hooks list page
+ */
 
 // Can the user view the panel?
 if(!$user->handlePanelPageLoad('admincp.websend.events')) {
@@ -26,10 +36,6 @@ $hooks = EventHandler::getEvents();
 
 // Get all enabled hooks
 $enabled_hooks = DB::getInstance()->query("SELECT * FROM nl2_websend_commands WHERE enabled = 1 AND server_id = ?", [$server_id])->results();
-//$enabled_hooks = $queries->getWhere('websend_commands', [
-//    'enabled', '=', 1,
-//    'server_id', '=', $server_id
-//]);
 $enabled_hooks = array_map(fn($item) => $item->hook, $enabled_hooks);
 
 // Make proper object that can be read by the website afterwards

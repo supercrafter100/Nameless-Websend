@@ -1,12 +1,13 @@
 <?php
 /*
- *	Made by Samerton
- *  https://github.com/samerton
- *  NamelessMC version 2.0.0-pr6
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
  *
  *  License: MIT
  *
- *  Websend initialisation file
+ *  Websend initialization file
  */
 
 // Language
@@ -21,4 +22,4 @@ spl_autoload_register(function ($class) {
 });
 
 require_once(ROOT_PATH . '/modules/Websend/module.php');
-$module = new Websend_Module($pages, $language, $websend_language, $queries, $cache, $endpoints);
+$module = new Websend_Module($pages, $language, $websend_language, $cache, $endpoints);

@@ -1,4 +1,14 @@
 <?php
+/*
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
+ *
+ *  License: MIT
+ *
+ *  Websend settings page
+ */
 
 // Can the user view the panel?
 if(!$user->handlePanelPageLoad('admincp.websend.settings')) {
@@ -42,10 +52,10 @@ if (Input::exists()) {
         if ($validation->passed()) {
             // Update settings
             // max console records
-            $maxrecords_id = $queries->getWhere('websend_settings', ['name', '=', 'console_max_lines']);
+            $maxrecords_id = DB::getInstance()->get('websend_settings', ['name', '=', 'console_max_lines'])->results();
             $maxrecords_id = $maxrecords_id[0]->id;
 
-            $queries->update('websend_settings', $maxrecords_id, [
+            DB::getInstance()->update('websend_settings', $maxrecords_id, [
                 'value' => Output::getClean(Input::get('maxConsoleRecords'))
             ]);
 
@@ -54,10 +64,10 @@ if (Input::exists()) {
             $cache->store('console_max_lines', Output::getClean(Input::get('maxConsoleRecords')));
 
             // console request interval
-            $console_interval_id = $queries->getWhere('websend_settings', ['name', '=', 'console_request_interval']);
+            $console_interval_id = DB::getInstance()->get('websend_settings', ['name', '=', 'console_request_interval'])->results();
             $console_interval_id = $console_interval_id[0]->id;
 
-            $queries->update('websend_settings', $console_interval_id, [
+            DB::getInstance()->update('websend_settings', $console_interval_id, [
                 'value' => Output::getClean(Input::get('consoleRequestInterval'))
             ]);
 
@@ -65,10 +75,10 @@ if (Input::exists()) {
             $cache->store('console_request_interval', Output::getClean(Input::get('consoleRequestInterval')));
 
             // max displayed records
-            $maxdisplayed_id = $queries->getWhere('websend_settings', ['name', '=', 'max_displayed_records']);
+            $maxdisplayed_id = DB::getInstance()->get('websend_settings', ['name', '=', 'max_displayed_records'])->results();
             $maxdisplayed_id = $maxdisplayed_id[0]->id;
 
-            $queries->update('websend_settings', $maxdisplayed_id, [
+            DB::getInstance()->update('websend_settings', $maxdisplayed_id, [
                 'value' => Output::getClean(Input::get('maxDisplayedRecords'))
             ]);
 
@@ -89,13 +99,13 @@ if (Input::exists()) {
 
 
 // Get all the settings
-$console_max_lines = $queries->getWhere('websend_settings', ['name', '=', 'console_max_lines']);
+$console_max_lines = DB::getInstance()->get('websend_settings', ['name', '=', 'console_max_lines'])->results();
 $console_max_lines = $console_max_lines[0]->value;
 
-$console_request_interval = $queries->getWhere('websend_settings', ['name', '=', 'console_request_interval']);
+$console_request_interval = DB::getInstance()->get('websend_settings', ['name', '=', 'console_request_interval'])->results();
 $console_request_interval = $console_request_interval[0]->value;
 
-$max_displayed_records = $queries->getWhere('websend_settings', ['name', '=', 'max_displayed_records']);
+$max_displayed_records = DB::getInstance()->get('websend_settings', ['name', '=', 'max_displayed_records'])->results();
 $max_displayed_records = $max_displayed_records[0]->value;
 
 if (Session::exists('general_language'))

@@ -1,4 +1,14 @@
 <?php
+/*
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
+ *
+ *  License: MIT
+ *
+ *  Websend editing of hooks page
+ */
 
 // Can the user view the panel?
 if (!$user->handlePanelPageLoad('admincp.websend.events')) {
@@ -30,7 +40,6 @@ if (!isset($_GET['hook']) || sizeof(EventHandler::getEvent($_GET['hook'])) == 0)
 $hook = EventHandler::getEvent($_GET['hook']);
 
 $db_hook = DB::getInstance()->query("SELECT * FROM nl2_websend_commands WHERE hook = ? AND server_id = ?", [$_GET['hook'], $server_id])->first();
-//$db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])))[0];
 
 
 // Check if data got posted to the website
@@ -52,7 +61,7 @@ if (Input::exists() && Token::check(Input::get('token'))) {
 
     // Update the data in the database
     if (is_null($db_hook)) {
-        $queries->create('websend_commands', array(
+        DB::getInstance()->insert('websend_commands', array(
             'hook' => $_GET['hook'],
             'commands' => $commands,
             'enabled' => $enabled,
@@ -60,10 +69,6 @@ if (Input::exists() && Token::check(Input::get('token'))) {
         ));
     } else {
         DB::getInstance()->query("UPDATE nl2_websend_commands SET commands = ?, enabled = ? WHERE hook = ? AND server_id = ?", [$commands, $enabled, $_GET['hook'], $server_id]);
-        //$queries->update('websend_commands', "$db_hook->id", array(
-        //    'commands' => $commands,
-        //    'enabled' => $enabled
-        //));
     }
 
     // Update the data in the hook handler
@@ -71,7 +76,6 @@ if (Input::exists() && Token::check(Input::get('token'))) {
     WSHook::setEnabled($_GET['hook'], $server_id, $enabled);
 
     // Update the db_hook variable with the latest data
-    //$db_hook = $queries->getWhere('websend_commands', array('hook', '=', Output::getClean($_GET['hook'])))[0];
     $db_hook = DB::getInstance()->query("SELECT * FROM nl2_websend_commands WHERE hook = ? AND server_id = ?", [$_GET['hook'], $server_id])->first();
     $success = $websend_language->get('language', 'hook_updated_successfully');
 }

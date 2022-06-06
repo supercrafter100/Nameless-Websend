@@ -1,4 +1,15 @@
 <?php
+/*
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
+ *
+ *  License: MIT
+ *
+ *  Api route for posting executed commands. Currently unused
+ */
+
 class PostCommands extends KeyAuthEndpoint {
 
     public function __construct() {

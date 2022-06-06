@@ -1,8 +1,9 @@
 <?php
 /*
- *	Made by Samerton
- *  https://github.com/samerton
- *  NamelessMC version 2.0.0-pr6
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
  *
  *  License: MIT
  *
@@ -10,12 +11,11 @@
  */
 
 class Websend_Module extends Module {
-	private $_language, $_websend_language, $_queries, $_cache, $_endpoints;
+	private $_language, $_websend_language, $_cache, $_endpoints;
 
-	public function __construct($pages, $language, $websend_language, $queries, $cache, $endpoints){
+	public function __construct($pages, $language, $websend_language, $cache, $endpoints){
 		$this->_language = $language;
 		$this->_websend_language = $websend_language;
-		$this->_queries = $queries;
 		$this->_cache = $cache;
         $this->_endpoints = $endpoints;
 
@@ -61,36 +61,36 @@ class Websend_Module extends Module {
         if(!$charset || is_array($charset))
             $charset = 'latin1';
 
-        $queries = new Queries();
+        $db = DB::getInstance();
 
-        if (!$queries->tableExists('websend_commands')) {
+        if (!$db->showTables('websend_commands')) {
             try {
-                $queries->createTable('websend_commands', ' `id` int(11) NOT NULL AUTO_INCREMENT, `hook` varchar(64) NOT NULL, `server_id` int(11) NOT NULL, `commands` mediumtext NOT NULL, `enabled` tinyint(1) NOT NULL DEFAULT \'0\', PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
+                $db->createTable('websend_commands', ' `id` int(11) NOT NULL AUTO_INCREMENT, `hook` varchar(64) NOT NULL, `server_id` int(11) NOT NULL, `commands` mediumtext NOT NULL, `enabled` tinyint(1) NOT NULL DEFAULT \'0\', PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
             } catch (Exception $e) {
                 // Error
             }
         }
 
-        if (!$queries->tableExists('websend_pending_commands')) {
+        if (!$db->showTables('websend_pending_commands')) {
             try {
-                $queries->createTable('websend_pending_commands', '`id` int(11) NOT NULL AUTO_INCREMENT, `server_id` int(11) NOT NULL, `command` varchar(2048) NOT NULL, `status` tinyint(1) NOT NULL DEFAULT \'0\', PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
+                $db->createTable('websend_pending_commands', '`id` int(11) NOT NULL AUTO_INCREMENT, `server_id` int(11) NOT NULL, `command` varchar(2048) NOT NULL, `status` tinyint(1) NOT NULL DEFAULT \'0\', PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
             } catch (Exception $e) {
                 // Error
             }
         }
 
-        if (!$queries->tableExists('websend_console_output')) {
+        if (!$db->showTables('websend_console_output')) {
             try {
-                $queries->createTable('websend_console_output', '`id` int(11) NOT NULL AUTO_INCREMENT, `server_id` int(11) NOT NULL, `content` text, PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
+                $db->createTable('websend_console_output', '`id` int(11) NOT NULL AUTO_INCREMENT, `server_id` int(11) NOT NULL, `content` text, PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
                 DB::getInstance()->query('CREATE INDEX idx_websend_console_output_server_id ON nl2_websend_console_output (server_id)');
             } catch (Exception $e) {
                 // Error
             }
         }
 
-        if (!$queries->tableExists('websend_settings')) {
+        if (!$db->showTables('websend_settings')) {
             try {
-                $queries->createTable('websend_settings', ' `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(64) NOT NULL, `value` text, PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
+                $db->createTable('websend_settings', ' `id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(64) NOT NULL, `value` text, PRIMARY KEY (`id`)', "ENGINE=$engine DEFAULT CHARSET=$charset");
             } catch (Exception $e) {
                 // Error
             }
@@ -98,19 +98,19 @@ class Websend_Module extends Module {
 
         $this->_cache->setCache('websend_settings');
 
-        $queries->create('websend_settings', [
+        $db->insert('websend_settings', [
             'name' => 'console_max_lines',
             'value' => 500
         ]);
         $this->_cache->store('console_max_lines', 500);
 
-        $queries->create('websend_settings', [
+        $db->insert('websend_settings', [
             'name' => 'console_request_interval',
             'value' => 5
         ]);
         $this->_cache->store('console_request_interval', 5);
 
-        $queries->create('websend_settings', [
+        $db->insert('websend_settings', [
             'name' => 'max_displayed_records',
             'value' => 200
         ]);
@@ -118,7 +118,7 @@ class Websend_Module extends Module {
 
         try {
             // Update main admin group permissions
-            $admin_permissions = $queries->getWhere('groups', array('id', '=', 2));
+            $admin_permissions = $db->get('groups', array('id', '=', 2))->results();
             $admin_permissions = $admin_permissions[0]->permissions;
 
             $admin_permissions = json_decode($admin_permissions, true);
@@ -128,7 +128,7 @@ class Websend_Module extends Module {
 
             $admin_permissions_updated = json_encode($admin_permissions);
 
-            $queries->update('groups', 2, array(
+            $db->update('groups', 2, array(
                 'permissions' => $admin_permissions_updated
             ));
         } catch (Exception $e) {

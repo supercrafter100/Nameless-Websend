@@ -1,4 +1,14 @@
 <?php
+/*
+ *	Originally made by Samerton (https://github.com/samerton)
+ *  Fork by Supercrafter100 (https://github.com/supercrafter100)
+ *
+ *  NamelessMC version 2.0.0-pr13
+ *
+ *  License: MIT
+ *
+ *  Websend class which has some database utilities
+ */
 
 class WSDBInteractions {
 
@@ -10,8 +20,7 @@ class WSDBInteractions {
 
         $max_lines = $cache->retrieve('max_displayed_records');
 
-        $query = "SELECT content FROM `nl2_websend_console_output` WHERE `server_id` = ? ORDER BY `id` LIMIT ?";
-        $lines = DB::getInstance()->selectQuery($query, [
+        $lines = DB::getInstance()->get('SELECT content FROM `nl2_websend_console_output` WHERE `server_id` = ? ORDER BY `id` LIMIT ?', [
             (int) $id,
             (int) $max_lines ?? 200
         ])->results();
@@ -35,14 +44,11 @@ class WSDBInteractions {
         $cache->setCache('websend_settings');
 
         $max_lines = $cache->retrieve('console_max_lines');
-
-        $query = "DELETE FROM nl2_websend_console_output WHERE id < (SELECT MAX(id) FROM nl2_websend_console_output) - ?";
-        DB::getInstance()->query($query, [$max_lines ?? 500]);
+        DB::getInstance()->query('DELETE FROM nl2_websend_console_output WHERE id < (SELECT MAX(id) FROM nl2_websend_console_output) - ?', [$max_lines ?? 500]);
     }
 
     public static function insertPendingCommand($id, $command) : void {
-        $query = "INSERT INTO `nl2_websend_pending_commands` (`server_id`, `command`) VALUES (?, ?)";
-        DB::getInstance()->createQuery($query, [
+        DB::getInstance()->get('INSERT INTO `nl2_websend_pending_commands` (`server_id`, `command`) VALUES (?, ?)', [
             $id,
             $command
         ]);

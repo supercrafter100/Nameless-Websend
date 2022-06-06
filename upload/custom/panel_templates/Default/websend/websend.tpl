@@ -35,24 +35,7 @@
             <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
-                    {if isset($NEW_UPDATE)}
-                    {if $NEW_UPDATE_URGENT eq true}
-                    <div class="alert alert-danger">
-                        {else}
-                        <div class="alert alert-primary alert-dismissible" id="updateAlert">
-                            <button type="button" class="close" id="closeUpdate" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            {/if}
-                            {$NEW_UPDATE}
-                            <br />
-                            <a href="{$UPDATE_LINK}" class="btn btn-primary" style="text-decoration:none">{$UPDATE}</a>
-                            <hr />
-                            {$CURRENT_VERSION}
-                            <br />
-                            {$NEW_VERSION}
-                    </div>
-                        {/if}
+                    {include 'includes/alerts.tpl'}
 
                         <!-- Spacing -->
                         <div style="height:1rem;"></div>
@@ -76,12 +59,12 @@
                                     <div class="card-body terminal-element terminal-input d-flex justify-content-between">
                                         <span><span id="terminal-container-name">container</span>:~/$ </span>
                                         <div class="terminal-element terminal-input-field">
-                                            <form id="command_post" action="" method="post">
+                                            <form class="terminal-input-form" id="command_post" action="" method="post">
                                                 <input type="text" name="command" class="terminal-input-form" placeholder="" autofocus>
                                                 <input type="hidden" name="token" value="{$TOKEN}">
                                             </form>
                                         </div>
-                                        <div class="terminal-element terminal-input-send" id="command-send-button" onClick="javascript:this.parentNode.submit()"><i class="fa fa-paper-plane"></i></div>
+                                        <div class="terminal-element terminal-input-send" id="command-send-button"><i class="fa fa-paper-plane"></i></div>
                                     </div>
                                 </div>
                             </div>
@@ -122,14 +105,37 @@
     const form = document.getElementById('command_post');
     form.addEventListener('submit',function (e) {
         e.preventDefault();
-        let formData = new FormData(form);
+        sendCommand();
+    });
+
+    const button = document.getElementById('command-send-button');
+    button.addEventListener('click', function (e) {
+        e.preventDefault();
+        sendCommand()
+    });
+
+    function sendCommand() {
+        const formData = new FormData(form);
         fetch(document.location.href, {
             method: 'POST',
             body: formData
         })
         form.reset();
-    });
+
+        $('body').toast({
+            showIcon: 'fa-solid fa-check move-right',
+            message: 'Command sent!',
+            class: 'success',
+            progressUp: true,
+            displayTime: 6000,
+            showProgress: 'bottom',
+            pauseOnHover: false,
+            position: 'bottom left',
+        });
+    }
     {/literal}
 </script>
 
 </body>
+
+</html>
