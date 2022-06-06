@@ -12,7 +12,7 @@
 
 class WSHook {
 
-	private static $events = [];
+    private static $events = [];
     private static $enabled = [];
 
     public static function setEvent(string $event, int $server, string $commands) {
@@ -48,10 +48,10 @@ class WSHook {
         self::$enabled[$event][$server] = $enabled;
     }
 
-	public static function execute($params = array()) : bool {
-		if(!isset($params['event'])){
-			return false;
-		}
+    public static function execute($params = array()) : bool {
+        if(!isset($params['event'])){
+            return false;
+        }
 
         // Check if we know anything about the event
         if (!array_key_exists($params['event'], self::$events)) {
@@ -92,6 +92,6 @@ class WSHook {
         }
 
 
-		return false;
-	}
+        return false;
+    }
 }

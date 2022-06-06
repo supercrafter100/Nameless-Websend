@@ -76,24 +76,24 @@ $smarty->assign(array(
 $template_file = 'websend/websend.tpl';
 
 if(isset($success))
-	$smarty->assign(array(
-		'SUCCESS' => $success,
-		'SUCCESS_TITLE' => $language->get('general', 'success')
-	));
+    $smarty->assign(array(
+        'SUCCESS' => $success,
+        'SUCCESS_TITLE' => $language->get('general', 'success')
+    ));
 
 if(isset($errors) && count($errors))
-	$smarty->assign(array(
-		'ERRORS' => $errors,
-		'ERRORS_TITLE' => $language->get('general', 'error')
-	));
+    $smarty->assign(array(
+        'ERRORS' => $errors,
+        'ERRORS_TITLE' => $language->get('general', 'error')
+    ));
 
 $smarty->assign(array(
-	'PARENT_PAGE' => PARENT_PAGE,
-	'DASHBOARD' => $language->get('admin', 'dashboard'),
-	'WEBSEND' => $websend_language->get('language', 'websend'),
-	'PAGE' => PANEL_PAGE,
-	'TOKEN' => Token::get(),
-	'SUBMIT' => $language->get('general', 'submit')
+    'PARENT_PAGE' => PARENT_PAGE,
+    'DASHBOARD' => $language->get('admin', 'dashboard'),
+    'WEBSEND' => $websend_language->get('language', 'websend'),
+    'PAGE' => PANEL_PAGE,
+    'TOKEN' => Token::get(),
+    'SUBMIT' => $language->get('general', 'submit')
 ));
 
 $page_load = microtime(true) - $start;
