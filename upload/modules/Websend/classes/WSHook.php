@@ -19,6 +19,14 @@ class WSHook {
         self::$events[$event][$server] = explode('\n', $commands);
     }
 
+    public static function getEvents() : array {
+        return self::$events;
+    }
+
+    public static function getEnabled() : array {
+        return self::$enabled;
+    }
+
     public static function registerEvents() {
 
         $results = DB::getInstance()->query('SELECT * FROM nl2_websend_commands WHERE enabled = 1')->results();
@@ -30,6 +38,7 @@ class WSHook {
             }
 
             if (!isset(self::$events[$event->hook][$event->server_id])) {
+                self::setEnabled($event->hook, $event->server_id, $event->enabled);
                 self::setEvent($event->hook, $event->server_id, $event->commands);
             }
         }
@@ -70,7 +79,7 @@ class WSHook {
             foreach($event as $server_id => $commands){
 
                 // Check if the event is enabled
-                if (!self::$enabled[$params['event'][$server_id]] == false) {
+                if (self::$enabled[$params['event'][$server_id]] == false) {
                     continue;
                 }
 

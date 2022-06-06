@@ -73,7 +73,7 @@ if (Input::exists() && Token::check(Input::get('token'))) {
 
     // Update the data in the hook handler
     WSHook::setEvent($_GET['hook'], $server_id, $commands);
-    WSHook::setEnabled($_GET['hook'], $server_id, $enabled);
+    WSHook::setEnabled($_GET['hook'], $server_id, boolval($enabled));
 
     // Update the db_hook variable with the latest data
     $db_hook = DB::getInstance()->query("SELECT * FROM nl2_websend_commands WHERE hook = ? AND server_id = ?", [$_GET['hook'], $server_id])->first();
