@@ -61,7 +61,7 @@ $smarty->assign([
     'STATUS' => $websend_language->get('language', 'status'),
     'HOOKS' => $mapped_hooks,
     'BACK' => $language->get('general', 'back'),
-    'BACK_LINK' => URL::build('/panel/websend/servers'),
+    'BACK_LINK' => URL::build('/panel/websend/servers&to=/panel/websend/hooks'),
 ]);
 
 // Success
