@@ -18,7 +18,7 @@ class WSDBInteractions {
         $cache = new Cache(['name' => 'nameless', 'extension' => '.cache', 'path' => ROOT_PATH . '/cache/']);
         $cache->setCache('websend_settings');
 
-        $max_lines = $cache->isCached('max_displayed_records') ? $cache->retrieve('max_displayed_records') : DB::getInstance()->get('websend_settings', ['name', 'max_displayed_records'])->first();
+        $max_lines = $cache->isCached('max_displayed_records') ? $cache->retrieve('max_displayed_records') : DB::getInstance()->get('websend_settings', ['name', 'max_displayed_records'])->first()->value;
         $cache->store('max_displayed_records', $max_lines);
 
         $lines = DB::getInstance()->query('SELECT content, id FROM `nl2_websend_console_output` WHERE `server_id` = ? AND id >= ? ORDER BY `id` LIMIT ?', [
@@ -47,7 +47,7 @@ class WSDBInteractions {
         $cache = new Cache(['name' => 'nameless', 'extension' => '.cache', 'path' => ROOT_PATH . '/cache/']);
         $cache->setCache('websend_settings');
 
-        $max_lines = $cache->isCached('console_max_lines') ? $cache->retrieve('console_max_lines') : DB::getInstance()->get('websend_settings', ['name', 'console_max_lines'])->first();
+        $max_lines = $cache->isCached('console_max_lines') ? $cache->retrieve('console_max_lines') : DB::getInstance()->get('websend_settings', ['name', 'console_max_lines'])->first()->value;
         $cache->store('console_max_lines', $max_lines);
 
         // TODO: Make it so this is server id specific. Maybe ask Derkades for help on the query with this one?
