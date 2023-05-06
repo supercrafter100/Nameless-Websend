@@ -1,0 +1,28 @@
+{
+    "language/websend": "Websend",
+    "language/websend_console": "Konzola",
+    "language/websend_events": "Udalosti",
+    "language/websend_settings": "Nastavenia",
+    "language/available_hooks": "Dostupné udalosti",
+    "language/enabled": "Povolené",
+    "language/disabled": "Zakázané",
+    "language/commands_information": "Príkazy môžete oddeliť novým riadkom. Nepridávajte <strong>/</strong> na začiatok príkazu. K dispozícii sú tieto premenné:",
+    "language/servers-list": "Vyberte server, pre ktorý chcete spravovať udalosti, ďalšie servery môžete nakonfigurovať v StaffCP > Integrácie > Minecraft > Minecraft servery ",
+    "language/commands": "Príkazy",
+    "language/enable_hook": "Povoliť udalosť?",
+    "language/hook": "Udalosť",
+    "language/hooks": "Udalosti",
+    "language/status": "Stav",
+    "language/settings": "Nastavenia",
+    "language/toastr_sent": "Príkaz bol úspešne odoslaný vášmu serveru",
+    "language/hook_updated_successfully": "Udalosť bola úspešne aktualizovaná",
+  
+    "language/settings_console_max_lines": "Maximum záznamov v databáze",
+    "language/settings_console_request_interval": "Interval požiadaviek konzoly (v sekundách)",
+    "language/settings_max_displayed_records": "Maximálny počet zobrazených riadkov v konzole",
+    "language/settings_updated_successfully": "Nastavenia websend boli úspešne aktualizované",
+  
+    "language/missing_maxconsolerecords": "Zadajte maximálny počet záznamov, ktoré sa majú uchovávať v databáze",
+    "language/missing_consolerequestinterval": "Zadajte interval v sekundách medzi požiadavkami na backend pre konzolu",
+    "language/missing_maxdisplayedrecords": "Zadajte maximálny počet riadkov, ktoré sa majú zobraziť v konzole"
+  }
