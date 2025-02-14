@@ -1,4 +1,7 @@
 # Nameless-Websend
+## ⚠️ IMPORTANT NOTICE
+> The websend module **NO LONGER** works with NamelessMC. It was broken due to an update to the events system, making me currently unable to dynamically register to events.
+
 Send commands from your website to your Minecraft server using the Websend plugin
 
 ## Requirements
